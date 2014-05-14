@@ -97,9 +97,7 @@ public class SynchronizedQueue {
         public void put(E msg) throws InterruptedException, TimeoutException {
             // Keep track of how many times we're called.
             mProducerCounter++;
-            boolean timeoutValue = mQueue.offer(msg,
-                                                TIMEOUT_SECONDS,
-                                                TimeUnit.SECONDS);
+            boolean timeoutValue = mQueue.offer(msg, TIMEOUT_SECONDS, TimeUnit.SECONDS);
             if (timeoutValue == false)
                 throw new TimeoutException();
         }
@@ -113,8 +111,7 @@ public class SynchronizedQueue {
         public E take() throws InterruptedException, TimeoutException {
             // Keep track of how many times we're called.
             mConsumerCounter++;
-            E rValue = mQueue.poll(TIMEOUT_SECONDS,
-                                   TimeUnit.SECONDS);
+            E rValue = mQueue.poll(TIMEOUT_SECONDS, TimeUnit.SECONDS);
 
             if (rValue == null)
                 throw new TimeoutException();
@@ -216,26 +213,32 @@ public class SynchronizedQueue {
             // initialization below to create two Java Threads, one
             // that's passed the producerRunnable and the other that's
             // passed the consumerRunnable.
-            Thread consumer = null;
-            Thread producer = null;
+            Thread consumer = new Thread(consumerRunnable);
+            Thread producer = new Thread(producerRunnable);
 
             // TODO - you fill in here to start the threads. More
             // interesting results will occur if you start the
             // consumer first.
+            consumer.start();
+            producer.start();
             
             // Give the Threads a chance to run before interrupting
             // them.
             Thread.sleep(100);
 
             // TODO - you fill in here to interrupt the threads.
+            consumer.interrupt();
+            producer.interrupt();
 
             // TODO - you fill in here to wait for the threads to
             // exit.
+            consumer.join();
+            producer.join();
+
             
             // Do some sanity checking to see if the Threads work as
             // expected.
-            if (consumer == null 
-                || producer == null)
+            if (consumer == null || producer == null)
                 return SynchronizedQueueResult.THREADS_NEVER_CREATED;
             else if (consumer.isAlive() 
                      || producer.isAlive())
