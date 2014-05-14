@@ -41,7 +41,7 @@ public class SynchronizedQueueTest {
 		
         return null;
     }
-	
+
     /**
      * Runs before each test. Sets queueSize.
      * @throws Exception
@@ -60,13 +60,13 @@ public class SynchronizedQueueTest {
     @Test
     public void arrayBlockingQueueTest() {
         QueueAdapter<Integer> queueAdapter =
-            new QueueAdapter<Integer>(new ArrayBlockingQueue<Integer>(queueSize));
+                new QueueAdapter<Integer>(new ArrayBlockingQueue<Integer>(queueSize));
 
         String errors = runQueueTest("ArrayBlockingQueue", queueAdapter);
 
         assertNull("Error occurred: " +  errors, errors);
     }
-	
+
     /**
      * Tests the BuggyBlockingQueue, an intentionally flawed class.
      * The buggyBlockingQueueTest() will succeed if the testQueue

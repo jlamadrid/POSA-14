@@ -1,11 +1,13 @@
 package edu.vuum.mooca;
-import java.util.concurrent.*;
+
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 /**
  * @class SynchronizedQueue
- * 
  * @brief This class tests the use of Java Threads and several
- *        implementations of the Java BlockingQueue interface.
+ * implementations of the Java BlockingQueue interface.
  */
 public class SynchronizedQueue {
     /**
@@ -35,12 +37,11 @@ public class SynchronizedQueue {
 
     /**
      * @class SynchronizedQueueResult
-     *
      * @brief Enumerated type for return values of testing logic, has
-     *       String for easy output.
+     * String for easy output.
      */
-   public enum SynchronizedQueueResult {
-        RAN_PROPERLY("Threads Ran Properly."), 
+    public enum SynchronizedQueueResult {
+        RAN_PROPERLY("Threads Ran Properly."),
         JOIN_NEVER_CALLED("Join() never called."),
         THREADS_NEVER_RAN("Threads never ran."),
         THREADS_NEVER_INTERUPTED("Threads never interrupted."),
@@ -71,10 +72,9 @@ public class SynchronizedQueue {
 
     /**
      * @class QueueAdapter
-     * 
      * @brief Applies a variant of the GoF Adapter pattern that
-     *        enables us to test several implementations of the
-     *        BlockingQueue interface.
+     * enables us to test several implementations of the
+     * BlockingQueue interface.
      */
     public static class QueueAdapter<E> {
         /**
@@ -91,7 +91,7 @@ public class SynchronizedQueue {
 
         /**
          * Insert msg at the tail of the queue.
-         * 
+         *
          * @throws TimeoutException and InterruptedException
          */
         public void put(E msg) throws InterruptedException, TimeoutException {
@@ -104,9 +104,8 @@ public class SynchronizedQueue {
 
         /**
          * Remove msg from the head of the queue.
-         * 
-         * @throws TimeoutException
-         *             , InterruptedException
+         *
+         * @throws TimeoutException , InterruptedException
          */
         public E take() throws InterruptedException, TimeoutException {
             // Keep track of how many times we're called.
@@ -131,69 +130,69 @@ public class SynchronizedQueue {
      * mQueue to insert the iteration number into the queue.
      */
     static Runnable producerRunnable = new Runnable() {
-            public void run() {
-                for (int i = 0; i < mMaxIterations; i++)
-                    try {
-                        mQueue.put(i);
-                        if (Thread.interrupted())
-                            throw new InterruptedException();
-                    } catch (InterruptedException e) {
-                        System.out.println("Thread properly interrupted by "
-                                           + e.toString() + " in producerRunnable");
-                        // This isn't an error - it just means that
-                        // we've been interrupted by the main Thread.
-                        return;
-                    } catch (TimeoutException e) {
-                        System.out.println("Exception " + e.toString()
-                                           + " occurred in producerRunnable");
-                        // Indicate a timeout.
-                        mProducerCounter = TIMEOUT_OCCURRED;
-                        return;
-                    } catch (Exception e) {
-                        System.out.println("Exception " + e.toString()
-                                           + " occurred in producerRunnable");
-                        // Indicate a failure.
-                        mProducerCounter = FAILURE_OCCURRED;
-                        return;
-                    }
-            }
-	};
+        public void run() {
+            for (int i = 0; i < mMaxIterations; i++)
+                try {
+                    mQueue.put(i);
+                    if (Thread.interrupted())
+                        throw new InterruptedException();
+                } catch (InterruptedException e) {
+                    System.out.println("Thread properly interrupted by "
+                            + e.toString() + " in producerRunnable");
+                    // This isn't an error - it just means that
+                    // we've been interrupted by the main Thread.
+                    return;
+                } catch (TimeoutException e) {
+                    System.out.println("Exception " + e.toString()
+                            + " occurred in producerRunnable");
+                    // Indicate a timeout.
+                    mProducerCounter = TIMEOUT_OCCURRED;
+                    return;
+                } catch (Exception e) {
+                    System.out.println("Exception " + e.toString()
+                            + " occurred in producerRunnable");
+                    // Indicate a failure.
+                    mProducerCounter = FAILURE_OCCURRED;
+                    return;
+                }
+        }
+    };
 
     /**
      * This runnable loops for mMaxIterations and calls take() on mQueue to
      * remove the iteration from the queue.
      */
     static Runnable consumerRunnable = new Runnable() {
-            public void run() {
-                for (int i = 0; i < mMaxIterations; i++)
-                    try {
-                        if (Thread.interrupted()) {
-                            throw new InterruptedException();
-                        }
-                        Integer result = (Integer) mQueue.take();
-
-                        System.out.println("iteration = " + result);
-                    } catch (InterruptedException e) {
-                        System.out.println("Thread properly interrupted by "
-                                           + e.toString() + " in consumerRunnable");
-                        // This isn't an error - it just means that
-                        // we've been interrupted by the main Thread.
-                        return;
-                    } catch (TimeoutException e) {
-                        System.out.println("Exception " + e.toString()
-                                           + " occurred in consumerRunnable");
-                        // Indicate a timeout.
-                        mProducerCounter = TIMEOUT_OCCURRED;
-                        return;
-                    } catch (Exception e) {
-                        System.out.println("Exception " + e.toString()
-                                           + " occurred in consumerRunnable");
-                        // Indicate a failure.
-                        mConsumerCounter = FAILURE_OCCURRED;
-                        return;
+        public void run() {
+            for (int i = 0; i < mMaxIterations; i++)
+                try {
+                    if (Thread.interrupted()) {
+                        throw new InterruptedException();
                     }
-            }
-	};
+                    Integer result = (Integer) mQueue.take();
+
+                    System.out.println("iteration = " + result);
+                } catch (InterruptedException e) {
+                    System.out.println("Thread properly interrupted by "
+                            + e.toString() + " in consumerRunnable");
+                    // This isn't an error - it just means that
+                    // we've been interrupted by the main Thread.
+                    return;
+                } catch (TimeoutException e) {
+                    System.out.println("Exception " + e.toString()
+                            + " occurred in consumerRunnable");
+                    // Indicate a timeout.
+                    mProducerCounter = TIMEOUT_OCCURRED;
+                    return;
+                } catch (Exception e) {
+                    System.out.println("Exception " + e.toString()
+                            + " occurred in consumerRunnable");
+                    // Indicate a failure.
+                    mConsumerCounter = FAILURE_OCCURRED;
+                    return;
+                }
+        }
+    };
 
     /**
      * Number of iterations to test (the actual test shouldn't run
@@ -221,7 +220,7 @@ public class SynchronizedQueue {
             // consumer first.
             consumer.start();
             producer.start();
-            
+
             // Give the Threads a chance to run before interrupting
             // them.
             Thread.sleep(100);
@@ -235,25 +234,25 @@ public class SynchronizedQueue {
             consumer.join();
             producer.join();
 
-            
+
             // Do some sanity checking to see if the Threads work as
             // expected.
             if (consumer == null || producer == null)
                 return SynchronizedQueueResult.THREADS_NEVER_CREATED;
-            else if (consumer.isAlive() 
-                     || producer.isAlive())
+            else if (consumer.isAlive()
+                    || producer.isAlive())
                 return SynchronizedQueueResult.JOIN_NEVER_CALLED;
-            else if (mConsumerCounter == 0 
-                     || mProducerCounter == 0)
+            else if (mConsumerCounter == 0
+                    || mProducerCounter == 0)
                 return SynchronizedQueueResult.THREADS_NEVER_RAN;
             else if (mConsumerCounter == mMaxIterations
-                     || mProducerCounter == mMaxIterations) 
+                    || mProducerCounter == mMaxIterations)
                 return SynchronizedQueueResult.THREADS_NEVER_INTERUPTED;
             else if (mConsumerCounter == FAILURE_OCCURRED
-                     || mProducerCounter == FAILURE_OCCURRED) 
+                    || mProducerCounter == FAILURE_OCCURRED)
                 return SynchronizedQueueResult.THREADS_THREW_EXCEPTION;
             else if (mConsumerCounter == TIMEOUT_OCCURRED
-                     || mProducerCounter == TIMEOUT_OCCURRED) 
+                    || mProducerCounter == TIMEOUT_OCCURRED)
                 return SynchronizedQueueResult.THREADS_TIMEDOUT;
             else
                 return SynchronizedQueueResult.RAN_PROPERLY;

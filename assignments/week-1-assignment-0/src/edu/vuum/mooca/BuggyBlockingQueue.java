@@ -35,6 +35,10 @@ public class BuggyBlockingQueue<E> implements BlockingQueue<E> {
         mList.add(msg);
     }
 
+    public boolean contains(Object o) {
+        return false;
+    }
+
     /**
      * Remove msg from the head of the queue, but doesn't block if the
      * queue is empty.
@@ -42,7 +46,6 @@ public class BuggyBlockingQueue<E> implements BlockingQueue<E> {
     public E take() throws InterruptedException {
         return mList.remove(0);
     }
-
     /**
      * All these methods are inherited from the BlockingQueue
      * interface. They are defined as no-ops to ensure the "Buggyness"
@@ -53,9 +56,6 @@ public class BuggyBlockingQueue<E> implements BlockingQueue<E> {
     }
     public int drainTo(Collection<? super E> c, int maxElements) {
         return 0;
-    }
-    public boolean contains(Object o) {
-        return false;
     }
     public boolean remove(Object o) {
         return false;
