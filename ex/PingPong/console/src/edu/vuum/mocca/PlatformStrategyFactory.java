@@ -5,8 +5,10 @@ import java.util.HashMap;
 /**
  * @class PlatformStrategyFactory
  * 
- * @brief This class is a factory that is responsible for building the
- *        designated @a PlatformStrategy implementation at runtime.
+ * @brief This class is a factory that is responsible for building the designated @a PlatformStrategy implementation at runtime.
+ *
+ * Impl detail: it maintains a map of the various strategy impls and at runtime selects one from the map based on
+ * a system property
  */
 public class PlatformStrategyFactory 
 {
@@ -24,23 +26,20 @@ public class PlatformStrategyFactory
      * and dispatch the execute() method of the associated @a PlatformStrategy
      * implementation.
      */
-    private HashMap<String, IPlatformStrategyFactoryStrategy> mPlatformStrategyMap = 
-        new HashMap<String, IPlatformStrategyFactoryStrategy>();
+    private HashMap<String, IPlatformStrategyFactoryStrategy> mPlatformStrategyMap = new HashMap<String, IPlatformStrategyFactoryStrategy>();
 	
     /** 
      * Ctor that stores the objects that perform output for a
      * particular platform, such as ConsolePlatformStrategy or the
      * AndroidPlatformStrategy.
      */
-    public PlatformStrategyFactory(final Object output,
-                                   final Object activity) 
+    public PlatformStrategyFactory(final Object output, final Object activity)
     {
     	/** 
          * The "Sun Microsystems Inc." string maps to a command object
          * that creates an @a ConsolePlatformStrategy implementation.
          */
-        mPlatformStrategyMap.put("Sun Microsystems Inc.",
-                                 new IPlatformStrategyFactoryStrategy() 
+        mPlatformStrategyMap.put("Sun Microsystems Inc.", new IPlatformStrategyFactoryStrategy()
                                  {
                                      public PlatformStrategy execute() 
                                      {
@@ -52,8 +51,7 @@ public class PlatformStrategyFactory
          * The "Oracle Corporation" string maps to a command object
          * that creates an @a ConsolePlatformStrategy implementation.
          */
-        mPlatformStrategyMap.put("Oracle Corporation", 
-                                 new IPlatformStrategyFactoryStrategy() 
+        mPlatformStrategyMap.put("Oracle Corporation", new IPlatformStrategyFactoryStrategy()
                                  {
                                      public PlatformStrategy execute() 
                                      {

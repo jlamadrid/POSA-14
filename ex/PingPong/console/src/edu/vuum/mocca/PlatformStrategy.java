@@ -5,7 +5,9 @@ package edu.vuum.mocca;
  *
  * @brief Provides methods that define a platform-independent API for
  *        output data to the display and synchronizing on thread
- *        completion in the ping/pong game.  This class is a singleton
+ *        completion in the ping/pong game.
+ *
+ *        This class is a singleton
  *        that also plays the role of the "Strategy" in the Strategy
  *        pattern.  Each platform (e.g., Android, command-line, etc.)
  *        subclasses from this singleton.

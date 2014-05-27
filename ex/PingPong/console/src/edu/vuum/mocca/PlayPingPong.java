@@ -17,6 +17,11 @@ import java.util.concurrent.CountDownLatch;
 public class PlayPingPong implements Runnable
 {
     /**
+     * Static data members shared by threads created internally.
+     */
+
+
+    /**
      * Number of iterations to ping/pong.
      */
     private static volatile int mMaxIterations;
@@ -25,8 +30,8 @@ public class PlayPingPong implements Runnable
     private static volatile int mMaxTurns = 1;
 
     /**
-     * Keeps track of the platform that we're running on, e.g.,
-     * Android vs. Console.
+     * Keeps track of the platform that we're running on, e.g., Android vs. Console.
+     * Used to portably print the output
      */
     private static volatile PlatformStrategy mPlatformStrategy;
 
@@ -79,9 +84,7 @@ public class PlayPingPong implements Runnable
          */
         public void run()
         {
-            for (int loopsDone = 1;
-                 loopsDone <= mMaxIterations;
-                 ++loopsDone) {
+            for (int loopsDone = 1; loopsDone <= mMaxIterations; ++loopsDone) {
                 // Perform the template method protocol for printing a
                 // "ping" or a "pong" on the display.  Note that the
                 // acquire() and release() hook methods that control
@@ -90,8 +93,7 @@ public class PlayPingPong implements Runnable
 
                 acquire();
 
-                mPlatformStrategy.print
-                    (mStringToPrint + "(" + loopsDone + ")");
+                mPlatformStrategy.print(mStringToPrint + "(" + loopsDone + ")");
 
                 release();
             }
@@ -128,9 +130,7 @@ public class PlayPingPong implements Runnable
         private final static int FIRST_SEMA = 0;
         private final static int SECOND_SEMA = 1;
 
-        PingPongThreadSema(String stringToPrint,
-                           Semaphore firstSema,
-                           Semaphore secondSema)
+        PingPongThreadSema(String stringToPrint, Semaphore firstSema, Semaphore secondSema)
         {
             super(stringToPrint);
             mSemas[FIRST_SEMA] = firstSema;
@@ -201,11 +201,7 @@ public class PlayPingPong implements Runnable
         private final static int FIRST_COND = 0;
         private final static int SECOND_COND = 1;
 
-        PingPongThreadCond(String stringToPrint,
-                           ReentrantLock lock,
-                           Condition firstCond,
-                           Condition secondCond,
-                           boolean isOwner) 
+        PingPongThreadCond(String stringToPrint, ReentrantLock lock, Condition firstCond, Condition secondCond, boolean isOwner)
         {
             super(stringToPrint);
             mIterationCount = mMaxTurns;
@@ -250,10 +246,7 @@ public class PlayPingPong implements Runnable
      * Constructor stores the PlatformStrategy and the number of
      * iterations to play ping/pong.
      */
-    public PlayPingPong (PlatformStrategy platformStrategy,
-                         int maxIterations,
-                         int maxTurns,
-                         String syncMechanism)
+    public PlayPingPong (PlatformStrategy platformStrategy, int maxIterations, int maxTurns, String syncMechanism)
     {
         // The PlatformStrategy being used.
         mPlatformStrategy = platformStrategy;
@@ -268,8 +261,7 @@ public class PlayPingPong implements Runnable
         mSyncMechanism = syncMechanism;
     }
 
-    private void makePingPongThreads(String schedMechanism, 
-                                     PingPongThread[] pingPongThreads)
+    private void makePingPongThreads(String schedMechanism, PingPongThread[] pingPongThreads)
     {
         if (schedMechanism.equals("SEMA")) {
             // Create the semaphores that schedule threads
@@ -295,6 +287,7 @@ public class PlayPingPong implements Runnable
                                        pingCond,
                                        pongCond,
                                        true);
+
             pingPongThreads[PONG_THREAD] = 
                 new PingPongThreadCond("pong",
                                        lock,
@@ -330,8 +323,7 @@ public class PlayPingPong implements Runnable
          * scheduling mechanism (e.g., "SEMA" for Semaphores, "COND"
          * for ConditionObjects, etc.).
          */
-        makePingPongThreads(mSyncMechanism, 
-                            pingPongThreads);
+        makePingPongThreads(mSyncMechanism, pingPongThreads);
 
         /**
          * Start ping and pong threads, which calls their run()
