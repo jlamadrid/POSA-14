@@ -178,7 +178,7 @@ public class PlayPingPong implements Runnable
         /**
          * Number of times we've iterated thus far in our "turn".
          */
-        private int mIterationCount = 0;
+        private int mTurnCountDown = 0;
         
         /**
          * Id for the other thread.
@@ -188,7 +188,7 @@ public class PlayPingPong implements Runnable
         /**
          * Thread whose turn it currently is.
          */
-        private static long mThreadOwner;
+        private static long mTurnOwner;
         
         public void setOtherThreadId(long otherThreadId) 
         {
@@ -204,12 +204,12 @@ public class PlayPingPong implements Runnable
         PingPongThreadCond(String stringToPrint, ReentrantLock lock, Condition firstCond, Condition secondCond, boolean isOwner)
         {
             super(stringToPrint);
-            mIterationCount = mMaxTurns;
+            mTurnCountDown = mMaxTurns;
             mLock = lock;
             mConds[FIRST_COND] = firstCond;
             mConds[SECOND_COND] = secondCond;
             if (isOwner) 
-                mThreadOwner = this.getId();
+                mTurnOwner = this.getId();
         }
 
         /**
@@ -218,7 +218,7 @@ public class PlayPingPong implements Runnable
         void acquire() {
             mLock.lock();
 
-            while (mThreadOwner != this.getId()) {
+            while (mTurnOwner != this.getId()) {
                 mConds[FIRST_COND].awaitUninterruptibly();
             }
 
@@ -231,11 +231,11 @@ public class PlayPingPong implements Runnable
         void release() {
             mLock.lock();
 
-            --mIterationCount;
+            --mTurnCountDown;
 
-            if (mIterationCount == 0) {
-                mThreadOwner = mOtherThreadId;
-                mIterationCount = mMaxTurns;
+            if (mTurnCountDown == 0) {
+                mTurnOwner = mOtherThreadId;
+                mTurnCountDown = mMaxTurns;
                 mConds[SECOND_COND].signal();
             }
             mLock.unlock();
