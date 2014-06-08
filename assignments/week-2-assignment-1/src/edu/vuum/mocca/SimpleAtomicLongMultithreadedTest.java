@@ -102,21 +102,21 @@ public class SimpleAtomicLongMultithreadedTest {
          */
         public void run() {
             try
-                {
-                    /**
-                     * Wait for all Threads to start running before
-                     * beginning the loop.
-                     */
-                    mStartBarrier.await();
-                
-                    for (; iterations < mMaxIterations; ++iterations) {
-                        mCommand.run();
-                    }
-                    /**
-                     * Inform the main thread that we're done.
-                     */
-                    mStopLatch.countDown();
-                } catch (Exception e) {
+            {
+                /**
+                 * Wait for all Threads to start running before
+                 * beginning the loop.
+                 */
+                mStartBarrier.await();
+
+                for (; iterations < mMaxIterations; ++iterations) {
+                    mCommand.run();
+                }
+                /**
+                 * Inform the main thread that we're done.
+                 */
+                mStopLatch.countDown();
+            } catch (Exception e) {
                 fail("Runnable failed.");
             }
         }
