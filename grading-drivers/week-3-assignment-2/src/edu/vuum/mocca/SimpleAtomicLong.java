@@ -39,6 +39,7 @@ class SimpleAtomicLong
      */
     public long get() {
         // TODO - you fill in here
+        return -1;
     }
 
     /**
@@ -48,6 +49,7 @@ class SimpleAtomicLong
      */
     public long decrementAndGet() {
         // TODO - you fill in here
+        return -1;
     }
 
     /**
@@ -57,6 +59,7 @@ class SimpleAtomicLong
      */
     public long getAndIncrement() {
         // TODO - you fill in here
+        return -1;
     }
 
     /**
@@ -66,6 +69,7 @@ class SimpleAtomicLong
      */
     public long getAndDecrement() {
         // TODO - you fill in here
+        return -1;
     }
 
     /**
@@ -75,6 +79,7 @@ class SimpleAtomicLong
      */
     public long incrementAndGet() {
         // TODO - you fill in here
+        return -1;
     }
 }
 

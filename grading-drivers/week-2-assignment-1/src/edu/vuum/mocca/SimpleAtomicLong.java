@@ -16,43 +16,40 @@ class SimpleAtomicLong
      * The value that's manipulated atomically via the methods.
      */
     private long mValue;
-    
+
     /**
      * The ReentrantReadWriteLock used to serialize access to mValue.
      */
-<<<<<<< HEAD:assignments/week-2-assignment-1/src/SimpleAtomicLong.java
-    // TODO - replace the null with the appropriate initialization:
-    private ReentrantReadWriteLock mRWLock = new ReentrantReadWriteLock();
-=======
 
     // TODO -- you fill in here by replacing the null with an
     // initialization of ReentrantReadWriteLock.
-    private ReentrantReadWriteLock mRWLock = null;
->>>>>>> 7e1400b02a86eea25347038b8ee11c9c43b68a47:grading-drivers/week-2-assignment-1/src/edu/vuum/mocca/SimpleAtomicLong.java
+    private ReentrantReadWriteLock mRWLock = new ReentrantReadWriteLock(true);
 
     /**
      * Creates a new SimpleAtomicLong with the given initial value.
      */
     public SimpleAtomicLong(long initialValue)
     {
-<<<<<<< HEAD:assignments/week-2-assignment-1/src/SimpleAtomicLong.java
-        // TODO - you fill in here
-
-=======
         // TODO -- you fill in here
->>>>>>> 7e1400b02a86eea25347038b8ee11c9c43b68a47:grading-drivers/week-2-assignment-1/src/edu/vuum/mocca/SimpleAtomicLong.java
+        mValue = initialValue;
     }
 
     /**
      * @brief Gets the current value.
-     * 
+     *
      * @returns The current value
      */
     public long get()
     {
-        long value;
+        long value = 0;
 
         // TODO -- you fill in here
+        try{
+            mRWLock.readLock().lock();
+            value = mValue;
+        }finally {
+            mRWLock.readLock().unlock();
+        }
 
         return value;
     }
@@ -67,6 +64,12 @@ class SimpleAtomicLong
         long value = 0;
 
         // TODO -- you fill in here
+        try{
+            mRWLock.writeLock().lock();
+            value = --mValue;
+        }finally {
+            mRWLock.writeLock().unlock();
+        }
 
         return value;
     }
@@ -82,6 +85,14 @@ class SimpleAtomicLong
 
         // TODO -- you fill in here
 
+        try{
+            mRWLock.writeLock().lock();
+            value = mValue;
+            mValue++;
+        }finally {
+            mRWLock.writeLock().unlock();
+        }
+
         return value;
     }
 
@@ -96,6 +107,14 @@ class SimpleAtomicLong
 
         // TODO -- you fill in here
 
+        try{
+            mRWLock.writeLock().lock();
+            value = mValue;
+            mValue--;
+        }finally {
+            mRWLock.writeLock().unlock();
+        }
+
         return value;
     }
 
@@ -109,6 +128,14 @@ class SimpleAtomicLong
         long value = 0;
 
         // TODO -- you fill in here
+
+        try{
+            mRWLock.writeLock().lock();
+            mValue++;
+            value = mValue;
+        }finally {
+            mRWLock.writeLock().unlock();
+        }
 
         return value;
     }
