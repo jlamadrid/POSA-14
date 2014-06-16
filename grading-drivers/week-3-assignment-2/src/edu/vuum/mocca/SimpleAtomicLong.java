@@ -1,8 +1,4 @@
-// Import the necessary Java synchronization and scheduling classes.
-
 package edu.vuum.mocca;
-
-
 
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.concurrent.locks.Lock;
@@ -28,8 +24,6 @@ class SimpleAtomicLong
     // TODO -- you fill in here by replacing the null with an
     // initialization of ReentrantReadWriteLock.
     private ReentrantReadWriteLock mRWLock = new ReentrantReadWriteLock();
-    private final Lock mRead = mRWLock.readLock();
-    private final Lock mWrite = mRWLock.writeLock();
 
     /**
      * Creates a new SimpleAtomicLong with the given initial value.
@@ -47,11 +41,16 @@ class SimpleAtomicLong
      */
     public long get()
     {
+        long value;
+
         // TODO -- you fill in here
-    	mRead.lock();
-    	try{ return mValue; }
-    	finally { mRead.unlock(); }
-    	
+        mRWLock.readLock().lock();
+        try{
+        	value = mValue;
+        } finally{
+        	mRWLock.readLock().unlock();
+        }
+        return value;
     }
 
     /**
@@ -61,11 +60,18 @@ class SimpleAtomicLong
      */
     public long decrementAndGet()
     {
+        long value = 0;
+
         // TODO -- you fill in here
-    	mWrite.lock();
-    	try{ return --mValue; }
-    	finally { mWrite.unlock(); }
-    	
+        mRWLock.writeLock().lock();
+        try{
+        	mValue--; 
+        	value = get();
+        } finally {
+        	mRWLock.writeLock().unlock();
+        }
+
+        return value;
     }
 
     /**
@@ -75,11 +81,18 @@ class SimpleAtomicLong
      */
     public long getAndIncrement()
     {
+        long value = 0;
+
         // TODO -- you fill in here
-    	mWrite.lock();
-        try{ return mValue++; }
-        finally { mWrite.unlock(); }
-        
+        mRWLock.writeLock().lock();
+        try{
+        	value = get();
+        	mValue++; 
+        } finally {
+        	mRWLock.writeLock().unlock();
+        }
+
+        return value;
     }
 
     /**
@@ -89,11 +102,18 @@ class SimpleAtomicLong
      */
     public long getAndDecrement()
     {
+        long value = 0;
+
         // TODO -- you fill in here
-    	mWrite.lock();
-        try { return mValue--; }
-        finally { mWrite.unlock(); }
-        
+        mRWLock.writeLock().lock();
+        try{
+        	value = get();
+        	mValue--; 
+        } finally {
+        	mRWLock.writeLock().unlock();
+        }
+
+        return value;
     }
 
     /**
@@ -103,10 +123,19 @@ class SimpleAtomicLong
      */
     public long incrementAndGet()
     {
+        long value = 0;
+
         // TODO -- you fill in here
-    	mWrite.lock();
-        try { return ++mValue; }
-        finally { mWrite.unlock(); }
         
+        mRWLock.writeLock().lock();
+        try{
+        	mValue++; 
+        	value = get();
+        } finally {
+        	mRWLock.writeLock().unlock();
+        }
+        
+        return value;
     }
 }
+

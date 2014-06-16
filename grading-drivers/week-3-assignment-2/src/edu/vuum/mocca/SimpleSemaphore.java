@@ -6,84 +6,78 @@ import java.util.concurrent.locks.Condition;
 
 /**
  * @class SimpleSemaphore
- * 
+ *
  * @brief This class provides a simple counting semaphore
  *        implementation using Java a ReentrantLock and a
- *        ConditionObject (which is accessed via a Condition). It must
- *        implement both "Fair" and "NonFair" semaphore semantics,
- *        just liked Java Semaphores.
+ *        ConditionObject.  It must implement both "Fair" and
+ *        "NonFair" semaphore semantics, just liked Java Semaphores. 
  */
 public class SimpleSemaphore {
     /**
      * Define a ReentrantLock to protect the critical section.
      */
     // TODO - you fill in here
-	private final ReentrantLock lock ;
+	final ReentrantLock mLock;
+
     /**
-     * Define a Condition that waits while the number of permits is 0.
+     * Define a ConditionObject to wait while the number of
+     * permits is 0.
      */
     // TODO - you fill in here
-	private final Condition condition ;
+	private final Condition waitIfZero;
+
     /**
      * Define a count of the number of available permits.
      */
     // TODO - you fill in here.  Make sure that this data member will
     // ensure its values aren't cached by multiple Threads..
-	private volatile int permits;
-    //private boolean isFair;
-    
-    public SimpleSemaphore(int permits, boolean fair) {
-        // TODO - you fill in here to initialize the SimpleSemaphore,
-        // making sure to allow both fair and non-fair Semaphore
-        // semantics.
-    	this.permits = permits;
-    	//this.isFair = fair;
-    	if (fair == true){
-    		lock  = new ReentrantLock(true);
-    		
-    	}
-    	else{
-    		lock  = new ReentrantLock(false);
-    		
-    	}
-    	condition = lock.newCondition();
+	private int mPermits;
+
+    /**
+     * Constructor initialize the data members.  
+     */
+    public SimpleSemaphore (int permits,
+                            boolean fair)
+    { 
+        // TODO - you fill in here
+    	mPermits = permits;
+    	mLock = new ReentrantLock(fair);
+    	waitIfZero = mLock.newCondition(); 
     }
 
     /**
-     * Acquire one permit from the semaphore in a manner that can be
-     * interrupted.
+     * Acquire one permit from the semaphore in a manner that can
+     * be interrupted.
      */
     public void acquire() throws InterruptedException {
-        // TODO - you fill in here.
-    	lock.lock();
+        // TODO - you fill in here
+    	mLock.lockInterruptibly();
     	try{
-    	//	System.out.println(permits
-          //          + ": permits now");
-    		while(permits <= 0)
-    			condition.await();
-    		permits --;
-    		
-    	}finally{
-    		lock.unlock();
+    		while(mPermits == 0){
+    			waitIfZero.await();
+    		}
+    		--mPermits;
+    		//waitIfZero.signal();
+    	} finally {
+    		mLock.unlock();
     	}
     }
 
     /**
-     * Acquire one permit from the semaphore in a manner that cannot be
-     * interrupted.
+     * Acquire one permit from the semaphore in a manner that
+     * cannot be interrupted.
      */
     public void acquireUninterruptibly() {
-        // TODO - you fill in here.
-    	lock.lock();
+        // TODO - you fill in here
+    	mLock.lock();
     	try{
-    		// System.out.println(permits
-             //        + ": permits now");
-    		while(permits <= 0)
-    			condition.awaitUninterruptibly();
-    		permits --;
-    		
-    	}finally{
-    		lock.unlock();
+    		while(mPermits == 0){
+    			waitIfZero.awaitUninterruptibly();
+    		}
+    		--mPermits;
+    		//waitIfZero.signal();
+    	} finally {
+    		mLock.unlock();
     	}
     }
 
@@ -91,27 +85,24 @@ public class SimpleSemaphore {
      * Return one permit to the semaphore.
      */
     void release() {
-        // TODO - you fill in here.
-    	lock.lock();
+        // TODO - you fill in here
+    	mLock.lock();
     	try{
-    		//System.out.println(permits
-               //     + ": permits now");
-    		if (permits++ >0){
-    			condition.signal();
-    		}
-    			
-    			
-    	}finally{
-    		lock.unlock();
+    		++mPermits;
+    		waitIfZero.signal();
+    	} finally {
+    		mLock.unlock();
     	}
+    	
+    	
     }
-
+    
     /**
      * Return the number of permits available.
      */
-    public int availablePermits() {
-        // TODO - you fill in here by changing null to the appropriate
-        // return value.
-        return permits;
+    public int availablePermits(){
+    	// TODO - you fill in here
+    	return mPermits; // You will change this value. 
     }
 }
+
