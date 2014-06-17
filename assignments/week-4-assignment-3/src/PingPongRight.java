@@ -19,7 +19,7 @@ public class PingPongRight {
     /**
      * Latch that will be decremented each time a thread exits.
      */
-    public static CountDownLatch latch = null; // TODO - You fill in here
+    public static CountDownLatch latch = new CountDownLatch(2); // TODO - You fill in here
 
     /**
      * @class PlayPingPongThread
@@ -33,9 +33,11 @@ public class PingPongRight {
         /**
          * Constructor initializes the data member.
          */
-        public PlayPingPongThread (/* TODO - You fill in here */)
+        public PlayPingPongThread (String stringToPrint, SimpleSemaphore s1, SimpleSemaphore s2)
         {
             // TODO - You fill in here.
+            this.s1 = s1;
+            this.s2 = s2;
         }
 
         /**
@@ -58,6 +60,8 @@ public class PingPongRight {
          * The two SimpleSemaphores use to alternate pings and pongs.
          */
         // TODO - You fill in here.
+        SimpleSemaphore s1 = null;
+        SimpleSemaphore s2 = null;
     }
 
     /**
@@ -69,15 +73,18 @@ public class PingPongRight {
             // alternation between threads.
 
             // TODO - You fill in here.
+            SimpleSemaphore s1 = new SimpleSemaphore(3, true);
+
+            SimpleSemaphore s2 = new SimpleSemaphore(3, true);
 
             System.out.println("Ready...Set...Go!");
 
             // Create the ping and pong threads, passing in the string
             // to print and the appropriate SimpleSemaphores.
             PlayPingPongThread ping =
-                new PlayPingPongThread(/* TODO - You fill in here */);
+                new PlayPingPongThread(s1,s2);
             PlayPingPongThread pong =
-                new PlayPingPongThread(/* TODO - You fill in here */);
+                new PlayPingPongThread(s1,s2);
             
             // Initiate the ping and pong threads, which will call the
             // run() hook method.
