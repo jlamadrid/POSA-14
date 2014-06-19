@@ -3,19 +3,17 @@ Week 4: Programming Assignment 3
 Released Monday, June 2nd, 2014
 Due Monday, June 16th, 2014
 
-In this assignment, you will implement a Java program that creates two
-instances of the PlayPingPongThread and then starts these thread
-instances to correctly alternate printing "Ping" and "Pong",
-respectively, on the console display.  This assignment also reuses the
-SimpleSemaphore you implemented for the previous assignment, so please
-apply any fixes motivated by watching the Virtual Office Hours video
-of the instructor's solution(s).
+In this assignment, you will implement a Java program that creates two instances of the PlayPingPongThread and then starts these thread
+instances to correctly alternate printing "Ping" and "Pong", respectively, on the console display.
 
-In this directory you'll find the PingPongRight.java class, which
-contains the skeleton Java code that you'll implement by completing
-the "TODO - You fill in here" comments to provide a working solution.
-DO NOT CHANGE THE OVERALL STRUCTURE OF THE SKELETON - just fill in the
+This assignment also reuses the SimpleSemaphore you implemented for the previous assignment, so please apply any fixes motivated by
+watching the Virtual Office Hours video of the instructor's solution(s).
+
+In this directory you'll find the PingPongRight.java class, which contains the skeleton Java code that you'll implement by completing
+the "TODO - You fill in here" comments to provide a working solution. DO NOT CHANGE THE OVERALL STRUCTURE OF THE SKELETON - just fill in the
 "TODO - You fill in here" portions!!!
+
+
 
 In particular, you'll need to do the following:
 
