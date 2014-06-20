@@ -2,19 +2,23 @@ package edu.vuum.mocca;
 
 /**
  * @class Options
- * 
  * @brief This class implements the Singleton pattern to handle
- *        command-line option processing.
+ * command-line option processing.
  */
-public class Options
-{
-    /** The singleton @a Options instance. */
+public class Options {
+    /**
+     * The singleton @a Options instance.
+     */
     private static Options mUniqueInstance = null;
 
-    /** Maximum number of iterations to run the program (defaults to 10). */
+    /**
+     * Maximum number of iterations to run the program (defaults to 10).
+     */
     private int mMaxIterations = 10;
 
-    /** Maximum number of iterations per "turn" (defaults to 1). */
+    /**
+     * Maximum number of iterations per "turn" (defaults to 1).
+     */
     private int mMaxTurns = 1;
 
     /**
@@ -23,24 +27,27 @@ public class Options
      */
     private String mSyncMechanism = "SEMA";
 
-    /** Method to return the one and only singleton uniqueInstance. */
-    public static Options instance()
-    {
+    /**
+     * Method to return the one and only singleton uniqueInstance.
+     */
+    public static Options instance() {
         if (mUniqueInstance == null)
             mUniqueInstance = new Options();
 
         return mUniqueInstance;
     }
 
-    /** Number of iterations to run the program. */
-    public int maxIterations()
-    {
+    /**
+     * Number of iterations to run the program.
+     */
+    public int maxIterations() {
         return mMaxIterations;
     }
 
-    /** Number of iterations to run the program. */
-    public int maxTurns()
-    {
+    /**
+     * Number of iterations to run the program.
+     */
+    public int maxTurns() {
         return mMaxTurns;
     }
 
@@ -48,16 +55,14 @@ public class Options
      * Which synchronization to use, e.g., "SEMA" vs. "COND".
      * Defaults to "SEMA".
      */
-    public String syncMechanism()
-    {
+    public String syncMechanism() {
         return mSyncMechanism;
     }
 
     /**
      * Parse command-line arguments and set the appropriate values.
      */
-    public boolean parseArgs(String argv[])
-    {
+    public boolean parseArgs(String argv[]) {
         if (argv != null) {
             for (int argc = 0; argc < argv.length; argc += 2)
                 if (argv[argc].equals("-i"))
@@ -66,19 +71,19 @@ public class Options
                     mSyncMechanism = argv[argc + 1];
                 else if (argv[argc].equals("-t"))
                     mMaxTurns = Integer.parseInt(argv[argc + 1]);
-                else
-                    {
-                        printUsage();
-                        return false;
-                    }
+                else {
+                    printUsage();
+                    return false;
+                }
         }
 
         return true;
     }
 
-    /** Print out usage and default values. */
-    public void printUsage()
-    {
+    /**
+     * Print out usage and default values.
+     */
+    public void printUsage() {
         PlatformStrategy platform = PlatformStrategy.instance();
         platform.errorLog("Options", "\nHelp Invoked on ");
         platform.errorLog("Options", "[-hist] ");
@@ -95,7 +100,6 @@ public class Options
     /**
      * Make the constructor private for a singleton.
      */
-    private Options()
-    {
+    private Options() {
     }
 }
