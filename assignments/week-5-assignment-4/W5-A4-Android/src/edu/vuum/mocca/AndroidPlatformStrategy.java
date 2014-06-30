@@ -1,12 +1,12 @@
 package edu.vuum.mocca;
 
+import java.io.PrintStream;
 import java.lang.ref.WeakReference;
 import java.util.concurrent.CountDownLatch;
 
 import android.app.Activity;
 import android.widget.TextView;
 import android.os.Handler;
-import android.os.Looper;
 import android.util.Log;
 
 /**
@@ -24,7 +24,7 @@ public class AndroidPlatformStrategy extends PlatformStrategy
 	
     /** Activity variable finds gui widgets by view. */
     private WeakReference<Activity> mActivity;
-
+    
     public AndroidPlatformStrategy(Object output,
                                    final Object activityParam)
     {
@@ -36,6 +36,7 @@ public class AndroidPlatformStrategy extends PlatformStrategy
 
         /** The current activity window (succinct or verbose). */
         mActivity = new WeakReference<Activity>((Activity) activityParam);
+
     }
 
     /**
@@ -43,13 +44,14 @@ public class AndroidPlatformStrategy extends PlatformStrategy
      * play() method returns.
      */
     private static CountDownLatch mLatch = null;
+    Handler handler = new Handler();
 
     /** Do any initialization needed to start a new game. */
     public void begin()
     {
         /** (Re)initialize the CountDownLatch. */
         // TODO - You fill in here.
-    	mLatch = new CountDownLatch(NUMBER_OF_THREADS);
+        mLatch = new CountDownLatch(NUMBER_OF_THREADS);
     }
 
     /** Print the outputString to the display. */
@@ -60,40 +62,21 @@ public class AndroidPlatformStrategy extends PlatformStrategy
          * and appends the outputString to a TextView. 
          */
         // TODO - You fill in here.
-    		
-		Activity activity = mActivity.get();
-		if (activity != null) { // If activity is still there
-			activity.runOnUiThread(new Runnable() {
-				@Override
-				public void run() {
-					mTextViewOutput.append(outputString + "\n");
-				}
-			});
-		}
-    	
+        // Log.i("TEST", outputString);
+        
+        Runnable runnable = new Runnable() {
+        	public void run() {
+        		mTextViewOutput.append(outputString + "\n");
+        	}
+        };
+        handler.post(runnable);
     }
-
+ 
     /** Indicate that a game thread has finished running. */
     public void done()
     {	
         // TODO - You fill in here.
-    	
-    	// Check if the Activity is still referenced.
-    	// If so, call countdown on UI thread
-		Activity activity = mActivity.get();
-		if (activity != null) { // If activity is still there
-			activity.runOnUiThread(new Runnable() {
-				@Override
-				public void run() {
-					mLatch.countDown();
-				}
-			});
-		} else {
-			
-			// otherwise, call countdown on current thread.
-			mLatch.countDown();
-		}
-    	
+        mLatch.countDown();
     }
 
     /** Barrier that waits for all the game threads to finish. */
@@ -114,5 +97,4 @@ public class AndroidPlatformStrategy extends PlatformStrategy
     {
        Log.e(javaFile, errorMessage);
     }
-    
 }
