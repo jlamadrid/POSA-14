@@ -5,6 +5,8 @@ import java.util.concurrent.CountDownLatch;
 
 import android.app.Activity;
 import android.widget.TextView;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 
 /**
@@ -58,30 +60,50 @@ public class AndroidPlatformStrategy extends PlatformStrategy
          * and appends the outputString to a TextView. 
          */
         // TODO - You fill in here.
-    	mActivity.get().runOnUiThread(new Runnable() {
-			
-			@Override
-			public void run() {
-				mTextViewOutput.append(outputString + '\n');
-			}
-		});
+    		
+		Activity activity = mActivity.get();
+		if (activity != null) { // If activity is still there
+			activity.runOnUiThread(new Runnable() {
+				@Override
+				public void run() {
+					mTextViewOutput.append(outputString + "\n");
+				}
+			});
+		}
+    	
     }
 
     /** Indicate that a game thread has finished running. */
     public void done()
     {	
         // TODO - You fill in here.
-    	mLatch.countDown();
+    	
+    	// Check if the Activity is still referenced.
+    	// If so, call countdown on UI thread
+		Activity activity = mActivity.get();
+		if (activity != null) { // If activity is still there
+			activity.runOnUiThread(new Runnable() {
+				@Override
+				public void run() {
+					mLatch.countDown();
+				}
+			});
+		} else {
+			
+			// otherwise, call countdown on current thread.
+			mLatch.countDown();
+		}
+    	
     }
 
     /** Barrier that waits for all the game threads to finish. */
     public void awaitDone()
     {
         // TODO - You fill in here.
-    	try {
-    		mLatch.await();
-    	} catch (InterruptedException e) {	
-    	}
+        try {
+            mLatch.await();
+        } catch(java.lang.InterruptedException e) {
+        }
     }
 
     /** 
@@ -92,4 +114,5 @@ public class AndroidPlatformStrategy extends PlatformStrategy
     {
        Log.e(javaFile, errorMessage);
     }
+    
 }
