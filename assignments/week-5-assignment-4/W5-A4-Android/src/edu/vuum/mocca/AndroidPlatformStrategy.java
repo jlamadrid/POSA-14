@@ -1,12 +1,11 @@
 package edu.vuum.mocca;
 
-import java.io.PrintStream;
 import java.lang.ref.WeakReference;
 import java.util.concurrent.CountDownLatch;
+import java.util.logging.Logger;
 
 import android.app.Activity;
 import android.widget.TextView;
-import android.os.Handler;
 import android.util.Log;
 
 /**
@@ -24,7 +23,7 @@ public class AndroidPlatformStrategy extends PlatformStrategy
 	
     /** Activity variable finds gui widgets by view. */
     private WeakReference<Activity> mActivity;
-    
+
     public AndroidPlatformStrategy(Object output,
                                    final Object activityParam)
     {
@@ -36,7 +35,6 @@ public class AndroidPlatformStrategy extends PlatformStrategy
 
         /** The current activity window (succinct or verbose). */
         mActivity = new WeakReference<Activity>((Activity) activityParam);
-
     }
 
     /**
@@ -44,14 +42,13 @@ public class AndroidPlatformStrategy extends PlatformStrategy
      * play() method returns.
      */
     private static CountDownLatch mLatch = null;
-    Handler handler = new Handler();
 
     /** Do any initialization needed to start a new game. */
     public void begin()
     {
-        /** (Re)initialize the CountDownLatch. */
+        /** Reset the CountDownLatch. */
         // TODO - You fill in here.
-        mLatch = new CountDownLatch(NUMBER_OF_THREADS);
+    	mLatch = new CountDownLatch(NUMBER_OF_THREADS);
     }
 
     /** Print the outputString to the display. */
@@ -62,31 +59,36 @@ public class AndroidPlatformStrategy extends PlatformStrategy
          * and appends the outputString to a TextView. 
          */
         // TODO - You fill in here.
-        // Log.i("TEST", outputString);
-        
-        Runnable runnable = new Runnable() {
-        	public void run() {
-        		mTextViewOutput.append(outputString + "\n");
-        	}
-        };
-        handler.post(runnable);
+    	
+    	mActivity.get().runOnUiThread(new Runnable() {
+    		  public void run() {
+    			  mTextViewOutput.append(outputString + "\n");
+    		  }
+    	});
     }
- 
+
     /** Indicate that a game thread has finished running. */
     public void done()
     {	
         // TODO - You fill in here.
-        mLatch.countDown();
+    	 mLatch.countDown();
     }
 
     /** Barrier that waits for all the game threads to finish. */
     public void awaitDone()
     {
         // TODO - You fill in here.
-        try {
+    	try {
             mLatch.await();
-        } catch(java.lang.InterruptedException e) {
+        } 
+    	catch(java.lang.InterruptedException e) {
         }
+    }
+
+    /** Returns the platform name in a String. */
+    public String platformName() 
+    {
+        return System.getProperty("java.specification.vendor");
     }
 
     /** 
