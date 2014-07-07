@@ -53,11 +53,15 @@
         <activity
             android:name="edu.vuum.mocca.ui.SoundRecordActivity"
             android:label="@string/title_activity_sound_record">
-            <!-- ASSIGNMENT - remove unnecessary intent-filter -->
-            <!--             <intent-filter> 										Line 56
-                            <action android:name="android.intent.action.TIMEZONE_CHANGED" />
-                        </intent-filter>
-             -->        </activity>
+
+            <!-- we do not need this intent-filter as per the assignment.-->
+
+            <!--
+            <intent-filter> 										Line 56
+                <action android:name="android.intent.action.TIMEZONE_CHANGED" />
+            </intent-filter>
+             -->
+        </activity>
 
     </application>
 
