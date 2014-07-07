@@ -67,7 +67,7 @@ public class DownloadActivity extends DownloadBase {
     	
     	// Handle any messages that get sent to this Handler
     	@Override
-        public void handleMessage(Message msg) {
+		public void handleMessage(Message msg) {
     		
             // Get an actual reference to the DownloadActivity
             // from the WeakReference.
@@ -80,8 +80,15 @@ public class DownloadActivity extends DownloadBase {
                 // bitmap that's been downloaded and returned to
                 // the DownloadActivity as a pathname who's Bundle
             	// key is defined by DownloadUtils.PATHNAME_KEY
+            	
+            	// Extract the data from Message, which is in the form
+                // of a Bundle that can be passed across processes.
             	Bundle data = msg.getData();
-            	String pathname = data.getString(DownloadUtils.PATHNAME_KEY);           	
+
+                // Extract the pathname from the Bundle.
+                String pathname = data.getString(DownloadUtils.PATHNAME_KEY);
+
+                // Display the image in the UI Thread.
             	activity.displayBitmap(pathname);
             }
     	}
@@ -112,19 +119,19 @@ public class DownloadActivity extends DownloadBase {
             // TODO - You fill in here to start the
             // DownloadIntentService with the appropriate Intent
             // returned from the makeIntent() factory method.
-        	Intent downloadIntent = DownloadIntentService.makeIntent(this, handler, getUrlString());
-        	startService(downloadIntent);
+        	Intent intent = DownloadIntentService.makeIntent(this, handler, getUrlString());
+        	startService(intent);
         	
-            which = "Starting DownloadIntentService";
+            which = "Starting IntentService";
             break;
         
         case R.id.thread_pool_button:
             // TODO - You fill in here to start the
             // ThreadPoolDownloadService with the appropriate Intent
             // returned from the makeIntent() factory method.
-        	Intent threadPoolDownloadIntent = ThreadPoolDownloadService.makeIntent(this, handler, getUrlString());
-        	startService(threadPoolDownloadIntent);
-        	
+        	Intent intent2 = ThreadPoolDownloadService.makeIntent(this, handler, getUrlString());
+        	startService(intent2);
+
             which = "Starting ThreadPoolDownloadService";
             break;
         
